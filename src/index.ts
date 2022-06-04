@@ -1,30 +1,30 @@
 const express = require('express');
 const cors = require('cors');
 import { Request, Response } from 'express';
-import { createUser, login, news } from './database';
+import { createVault, getVault, removeVault } from './vaultsDB';
 
 // Initialize server
-const moviesServer = express();
-moviesServer.use(cors());
-moviesServer.use(express.json());
-moviesServer.use(express.urlencoded({ extended: false }));
-moviesServer.listen(443, () => {
+const vaultsServer = express();
+vaultsServer.use(cors());
+vaultsServer.use(express.json());
+vaultsServer.use(express.urlencoded({ extended: false }));
+vaultsServer.listen(443, () => {
   console.log(`Server on port 443`);
 });
 
 // Server APIs
-moviesServer.post('/createUser', (req: Request, res: Response) => {
-  createUser(req.body.email, req.body.password, req.body.name)
+vaultsServer.post('/createVault', (req: Request, res: Response) => {
+  createVault(req.body.name, req.body.apiKey, req.body.exchange,  req.body.owner)
     .then((result) => { res.json(result); });
 });
 
-moviesServer.post('/login', (req: Request, res: Response) => {
-  login(req.body.email, req.body.password)
+vaultsServer.post('/removeVault', (req: Request, res: Response) => {
+  removeVault(req.body.apiKey)
     .then((result) => { console.log(result) ; res.json(result); });
 });
 
-moviesServer.get('/news', (req: Request, res: Response) => {
-  news().then(function(result){
+vaultsServer.get('/getVault', (req: Request, res: Response) => {
+  getVault(req.body.apiKey).then(function(result){
     res.json(result);
   });
 });
