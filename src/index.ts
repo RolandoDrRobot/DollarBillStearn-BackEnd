@@ -14,17 +14,17 @@ vaultsServer.listen(443, () => {
 
 // Server APIs
 vaultsServer.post('/createVault', (req: Request, res: Response) => {
-  createVault(req.body.name, req.body.apiKey, req.body.exchange,  req.body.owner)
+  createVault(req.body.name, req.body.api, req.body.apiSecret, req.body.exchange,  req.body.owner)
     .then((result) => { res.json(result); });
 });
 
 vaultsServer.post('/removeVault', (req: Request, res: Response) => {
-  removeVault(req.body.apiKey)
+  removeVault(req.body.api)
     .then((result) => { console.log(result) ; res.json(result); });
 });
 
-vaultsServer.get('/getVault', (req: Request, res: Response) => {
-  getVault(req.body.apiKey).then(function(result){
+vaultsServer.post('/getVault', (req: Request, res: Response) => {
+  getVault(req.body.account).then(function(result){
     res.json(result);
   });
 });

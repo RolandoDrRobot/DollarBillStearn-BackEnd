@@ -12,26 +12,29 @@ const database = firebase.firestore();
 // Here we can validate If the collection vaults exists
 const vaultsDB = database.collection('vaults');
 
-const createVault = async (name: string, apiKey: string, exchange: string, owner: string) => {
+const createVault = async (name: string, api: string, apiSecret: string, exchange: string, owner: string) => {
   let createVaultStatus = { 
     status: 'no created',
     name: '',
-    apiKey: '',
+    api: '',
+    apiSecret: '',
     exchange: '',
     owner: ''
   };
   try {
-    const newVault = await vaultsDB.doc(apiKey).get();
+    const newVault = await vaultsDB.doc(api).get();
     if (!newVault.exists) {
-        vaultsDB.doc(apiKey).set({
+        vaultsDB.doc(api).set({
           name: name,
-          apiKey: apiKey,
+          api: api,
+          apiSecret: apiSecret,
           exchange: exchange,
           owner: owner
         }); 
         createVaultStatus.status = 'created';
         createVaultStatus.name = name;
-        createVaultStatus.apiKey = apiKey;
+        createVaultStatus.api = api;
+        createVaultStatus.apiSecret = apiSecret;
         createVaultStatus.exchange = exchange;
         createVaultStatus.owner = owner;
     } else { createVaultStatus.status = 'The vault already exist!'; }
@@ -42,29 +45,27 @@ const createVault = async (name: string, apiKey: string, exchange: string, owner
   return createVaultStatus;
 }
 
-const getVault = async (apiKey: string) => {
-  let status = { 
-    status: 'no vault',
-  };
+const getVault = async (address: string) => {
+  let vaults:Array<any> = [];
   try {
-    const vault = await vaultsDB.doc(apiKey).get();
-    if (vault.exists) {
-      status.status = 'vault found';
-      return vault;
-    } else {
-      status.status = 'The vault does not exist';
-    }
+    const snapshot = await vaultsDB.get();
+    const allDocuments = snapshot.docs.map((doc: { data: () => any; }) => doc.data());
+    allDocuments.forEach(function (item:any, index:any) {
+       if(item.owner === address) vaults.push(item);
+    });
+    return vaults;
+    
   } catch (e) {
-    status.status = 'There was an error with the request: ' + e;
+    
   }
 }
 
-const removeVault = async (apiKey: string) => {
+const removeVault = async (api: string) => {
   let status = { 
     status: 'no removed',
   };
   try {
-    const vault = await vaultsDB.doc(apiKey).get();
+    const vault = await vaultsDB.doc(api).get();
     if (vault.exists) {
       status.status = 'removed';
     } else {
