@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 import { Request, Response } from 'express';
-import { createVault, getVault, removeVault } from './vaultsDB';
+import { createVault, getVaults, removeVault } from './vaultsDB';
 
 // Initialize server
 const vaultsServer = express();
@@ -23,8 +23,8 @@ vaultsServer.post('/removeVault', (req: Request, res: Response) => {
     .then((result) => { console.log(result) ; res.json(result); });
 });
 
-vaultsServer.post('/getVault', (req: Request, res: Response) => {
-  getVault(req.body.account).then(function(result){
+vaultsServer.post('/getVaults', (req: Request, res: Response) => {
+  getVaults(req.body.account).then(function(result:any){
     res.json(result);
   });
 });

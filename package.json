@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/RolandoDrRobot/RoloToken-Backend#readme",
   "dependencies": {
+    "ccxt": "^1.85.55",
     "cors": "^2.8.5",
     "dotenv": "^11.0.0",
     "express": "^4.17.2",
