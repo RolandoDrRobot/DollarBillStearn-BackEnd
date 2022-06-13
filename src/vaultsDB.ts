@@ -59,37 +59,41 @@ const removeVault = async (api: string) => {
   return status;
 }
 
-const depureVaults = async (collection:any) => {
+const depureVaults = async (vaults:any) => {
   let depuredVaults:Array<any> = [];
 
-  collection.forEach(function (item:any, index:any) {
-    const depuredVault = {
-      name: item.name,
-      exchange: item.exchange,
-      owner: item.owner,
-      balance: {}
-    };
+    for (const vault of vaults) {
+      const depuredVault = {
+        name: vault.name,
+        exchange: vault.exchange,
+        owner: vault.owner,
+        balance: {}
+      };
 
-    depuredVaults.push(depuredVault);
-  });
+      const exchangeClass:any = ccxt[vault.exchange];
+      let exchangeTest:any;
+      if (vault.api && vault.apiSecret) {
+        exchangeTest = new exchangeClass ({ 'apiKey': vault.api, 'secret': vault.apiSecret });
+        depuredVault.balance = await exchangeTest.fetchBalance();
+      }
+
+      depuredVaults.push(depuredVault);
+    }
 
   return depuredVaults;
 }
 
-const getVaultsCollection = async (address:string) => {
+const getVaults = async (address: string) => {
   let vaults:Array<any> = [];
+  let depuredVaults:Array<any> = [];
+  
   const snapshot = await vaultsDB.get();
   const allDocuments = snapshot.docs.map((doc: { data: () => any; }) => doc.data());
   allDocuments.forEach(function (item:any, index:any) {
     if(item.owner === address) vaults.push(item);
   });
-  return vaults;
-}
 
-const getVaults = async (address: string) => {
-  let depuredVaults:Array<any> = [];
-  const vaultsCollection = await getVaultsCollection(address);
-  depuredVaults = await depureVaults(vaultsCollection);
+  depuredVaults = await depureVaults(vaults);
   return depuredVaults;
 }
 
