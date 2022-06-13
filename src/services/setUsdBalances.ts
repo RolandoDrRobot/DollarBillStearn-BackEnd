@@ -21,7 +21,7 @@ async function setUsdBalances(vaultBase:any) {
   const exchange  = new exchangeClass();
 
   for (const key in vaultBase.balance) {
-    if (vaultBase.balance[key].total > 0.01 && key !== 'USDT' && key !== 'BTTC') {
+    if (vaultBase.balance[key].total > 0 && key !== 'USDT' && key !== 'BTTC') {
       const tokenPrice = await exchange.fetchTicker(`${key}/USDT`);
       depuredVault.usdBalance[key] = vaultBase.balance[key].total * tokenPrice.bid;
       depuredVault.usdTotalBalance = depuredVault.usdTotalBalance + depuredVault.usdBalance[key];
