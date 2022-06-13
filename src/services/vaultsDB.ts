@@ -1,8 +1,9 @@
 require('dotenv').config();
 const ccxt = require ('ccxt');
+import { setUsdBalances } from './setUsdBalances';
 
 const firebase = require('firebase-admin');
-const firebaseAccount = require('./keys.json');
+const firebaseAccount = require('../keys.json');
 
 firebase.initializeApp({
  credential: firebase.credential.cert(firebaseAccount)
@@ -10,7 +11,6 @@ firebase.initializeApp({
 
 const database = firebase.firestore();
 
-// Here we can validate If the collection vaults exists
 const vaultsDB = database.collection('vaults');
 
 const createVault = async (name: string, api: string, apiSecret: string, exchange: string, owner: string) => {
@@ -63,20 +63,22 @@ const depureVaults = async (vaults:any) => {
   let depuredVaults:Array<any> = [];
 
     for (const vault of vaults) {
-      const depuredVault = {
+      let vaultBase = {
         name: vault.name,
         exchange: vault.exchange,
         owner: vault.owner,
-        balance: {}
+        balance: {},
+        usdtBalance: {}
       };
 
       const exchangeClass:any = ccxt[vault.exchange];
       let exchangeTest:any;
       if (vault.api && vault.apiSecret) {
         exchangeTest = new exchangeClass ({ 'apiKey': vault.api, 'secret': vault.apiSecret });
-        depuredVault.balance = await exchangeTest.fetchBalance();
+        vaultBase.balance = await exchangeTest.fetchBalance();
       }
 
+      const depuredVault = await setUsdBalances(vaultBase);
       depuredVaults.push(depuredVault);
     }
 
