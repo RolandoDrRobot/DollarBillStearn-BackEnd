@@ -1,6 +1,6 @@
 require('dotenv').config();
 const ccxt = require ('ccxt');
-import { setUsdBalances } from './setUsdBalances';
+import { setBalances } from './setBalances';
 
 const firebase = require('firebase-admin');
 const firebaseAccount = require('../keys.json');
@@ -78,7 +78,7 @@ const depureVaults = async (vaults:any) => {
         vaultBase.balance = await exchangeTest.fetchBalance();
       }
 
-      const depuredVault = await setUsdBalances(vaultBase);
+      const depuredVault = await setBalances(vaultBase);
       depuredVaults.push(depuredVault);
     }
 
