@@ -14,7 +14,11 @@ async function setBalances(vaultBase:any) {
     owner: vaultBase.owner,
     balance: vaultBase.balance,
     usdBalance: obj,
-    usdTotalBalance: 0
+    usdTotalBalance: {
+      free: 0,
+      used: 0,
+      total: 0
+    }
   };
 
   const exchangeClass:any = ccxt[vaultBase.exchange];
@@ -29,7 +33,9 @@ async function setBalances(vaultBase:any) {
           free: vaultBase.balance[key].free * tokenPrice.bid,
           used: vaultBase.balance[key].used * tokenPrice.bid,
         }
-        depuredVault.usdTotalBalance = depuredVault.usdTotalBalance + depuredVault.usdBalance[key].total;
+        depuredVault.usdTotalBalance.free = depuredVault.usdTotalBalance.free + depuredVault.usdBalance[key].free;
+        depuredVault.usdTotalBalance.used = depuredVault.usdTotalBalance.used + depuredVault.usdBalance[key].used;
+        depuredVault.usdTotalBalance.total = depuredVault.usdTotalBalance.total + depuredVault.usdBalance[key].total;
       }
     } else {
       delete vaultBase.balance[key]; 
