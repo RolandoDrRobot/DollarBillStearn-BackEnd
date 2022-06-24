@@ -1,19 +1,7 @@
-require('dotenv').config();
-const ccxt = require ('ccxt');
 import { setBalances } from './setBalances';
+const ccxt = require ('ccxt');
 
-const firebase = require('firebase-admin');
-const firebaseAccount = require('../keys.json');
-
-firebase.initializeApp({
- credential: firebase.credential.cert(firebaseAccount)
-});
-
-const database = firebase.firestore();
-
-const vaultsDB = database.collection('vaults');
-
-const createVault = async (name: string, api: string, apiSecret: string, exchange: string, owner: string) => {
+const createVault = async (vaultsDB:any, name: string, api: string, apiSecret: string, exchange: string, owner: string) => {
   let createVaultStatus = { 
     status: 'no created',
   };
@@ -42,7 +30,7 @@ const createVault = async (name: string, api: string, apiSecret: string, exchang
   return createVaultStatus;
 }
 
-const removeVault = async (api: string) => {
+const removeVault = async (vaultsDB:any, api: string) => {
   let status = { 
     status: 'no removed',
   };
@@ -85,7 +73,7 @@ const depureVaults = async (vaults:any) => {
   return depuredVaults;
 }
 
-const getVaults = async (address: string) => {
+const getVaults = async (vaultsDB:any, address: string) => {
   let vaults:Array<any> = [];
   let depuredVaults:Array<any> = [];
   

@@ -1,64 +1,91 @@
-require('dotenv').config();
-
-const firebase = require('firebase-admin');
-const firebaseAccount = require('../keys.json');
-
-firebase.initializeApp({
- credential: firebase.credential.cert(firebaseAccount)
-});
-
-const database = firebase.firestore();
-
-const vaultsDB = database.collection('favourites');
-
-const fav = async (account: string, ticker: string) => {
+const createFavAccount = async (favsDB:any, account: string) => {
   let createFavouriteStatus = { 
     status: 'no created',
   };
   try {
-    const newFavouriteAccount = await vaultsDB.doc(account).get();
-    if (!newFavouriteAccount.exists) {
-      vaultsDB.doc(account).set({
-        account: account,
-        favouriteTickers: []
-      });
-      createFavouriteStatus.status = 'Favourite account created';
-    } else { createFavouriteStatus.status = 'The favourite account already exist!'; }
+    
+    createFavouriteStatus.status = 'created';
   }
   catch (e) { 
-    createFavouriteStatus.status = 'There was an error creating the vault. Please make sure you have a valid api and secret keys'; 
+    createFavouriteStatus.status = 'There was an error creating the Favourite account'; 
   }
   return createFavouriteStatus;
 }
 
-const removeFav = async (api: string) => {
-  let status = { 
-    status: 'no removed',
+const fav = async (favsDB:any, account: string, ticker:string) => {
+  let favStatus = { 
+    status: 'Ticker no added',
   };
   try {
-    const vault = await vaultsDB.doc(api).get();
-    if (vault.exists) {
-      status.status = 'removed';
+    const favAccount = await favsDB.doc(account).get();
+    if (!favAccount._fieldsProto) {
+      await favsDB.doc(account).set({
+        account: account,
+        favouriteTickers: {
+          [ticker]: true
+        }
+      });
+      favStatus.status = 'Added ticker to favourites';
     } else {
-      status.status = 'The Vault does not exist';
+      let favAccounts:Array<any> = [];
+      const snapshot = await favsDB.get();
+      const allAccounts = snapshot.docs.map((doc: { data: () => any; }) => doc.data());
+      allAccounts.forEach(function (item:any, index:any) {
+        if(item.account === account) favAccounts.push(item);
+      });
+
+      const favTickers = favAccounts ? favAccounts[0].favouriteTickers : {}
+      favTickers[ticker] = true;
+
+      await favsDB.doc(account).update({
+        favouriteTickers: favTickers
+      });
+      favStatus.status = 'Added ticker to favourites';
     }
-  } catch (e) {
-    status.status = 'There was an error with the request: ' + e;
   }
-  return status;
+  catch (e) { 
+    favStatus.status = 'There was an error'; 
+  }
+  return favStatus;
 }
 
-const getFavs = async (address: string) => {
-  let vaults:Array<any> = [];
-  let depuredVaults:Array<any> = [];
+const removeFav = async (favsDB:any, account: string, ticker:string) => {
+  let favStatus = { 
+    status: 'no fav',
+  };
+  try {
+    let favAccounts:Array<any> = [];
+    const snapshot = await favsDB.get();
+    const allAccounts = snapshot.docs.map((doc: { data: () => any; }) => doc.data());
+    allAccounts.forEach(function (item:any, index:any) {
+      if(item.account === account) favAccounts.push(item);
+    });
+
+    const favTickers = favAccounts ? favAccounts[0].favouriteTickers : {}
+    favTickers[ticker] = false;
+
+    await favsDB.doc(account).update({
+      favouriteTickers: favTickers
+    });
+    favStatus.status = 'Removed ticker to favourites';
+  }
+  catch (e) { 
+    favStatus.status = 'There was an error'; 
+  }
+  return favStatus;
+}
+
+const getFavs = async (favsDB:any, account: string) => {
+  let favAccount:any = {};
   
-  const snapshot = await vaultsDB.get();
-  const allDocuments = snapshot.docs.map((doc: { data: () => any; }) => doc.data());
-  allDocuments.forEach(function (item:any, index:any) {
-    if(item.owner === address) vaults.push(item);
+  const snapshot = await favsDB.get();
+  const allFavsAccounts = snapshot.docs.map((doc: { data: () => any; }) => doc.data());
+  allFavsAccounts.forEach(function (item:any, index:any) {
+    if(item.account === account) favAccount = item;
   });
 
-  return depuredVaults;
+  console.log(favAccount);
+  return favAccount;
 }
 
 
