@@ -4,6 +4,7 @@ import { Request, Response } from 'express';
 import { run } from './services/firebase';
 import { createVault, getVaults, removeVault } from './services/vaultsDB';
 import { fetchPrices } from './services/fetchPrices';
+import { tradingBox } from './services/tradingBox';
 import { fav, removeFav, getFavs } from './services/favourites';
 
 // Initialize server
@@ -39,8 +40,22 @@ dollarBillServer.post('/getVaults', (req: Request, res: Response) => {
 
 
 // EXCHANGE
+const transactionsDB = database.collection('transactions');
+
 dollarBillServer.get('/fetchPrices', (req: Request, res: Response) => {
   fetchPrices().then(function(result:any){
+    res.json(result);
+  });
+});
+
+dollarBillServer.post('/openOrder', (req: Request, res: Response) => {
+  tradingBox.openOrder(vaultsDB, transactionsDB, req.body.symbol, req.body.type, req.body.side, req.body.amount, req.body.price, req.body.account, req.body.exchange).then(function(result:any){
+    res.json(result);
+  });
+});
+
+dollarBillServer.post('/closeOrder', (req: Request, res: Response) => {
+  tradingBox.closeOrder().then(function(result:any){
     res.json(result);
   });
 });

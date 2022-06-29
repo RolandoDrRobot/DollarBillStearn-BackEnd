@@ -83,8 +83,6 @@ const getFavs = async (favsDB:any, account: string) => {
   allFavsAccounts.forEach(function (item:any, index:any) {
     if(item.account === account) favAccount = item;
   });
-
-  console.log(favAccount);
   return favAccount;
 }
 
