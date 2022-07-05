@@ -23,12 +23,9 @@ const tradingBox = {
       let exchangeTest:any;
       if (vault.api && vault.apiSecret) exchangeTest = new exchangeClass ({ 'apiKey': vault.api, 'secret': vault.apiSecret });
 
-      // return exchangeTest.createOrder('LTC/USDT', 'market', 'buy',  1, 52.37);
-      return await exchangeTest.createOrder(symbol, type, side, amount, price);
-      // console.log(transaction);
-      // return transaction;
-      transactionStatus.status = 'Order Open';
-      // We save the transaction
+      const order =  await exchangeTest.createOrder(symbol, type, side, amount, price);
+      transactionStatus.status = 'Order created sucessfully';
+      
       const transactionsAccount = await transactionsDB.doc(account).get();
 
       // if (!transactionsAccount._fieldsProto) {

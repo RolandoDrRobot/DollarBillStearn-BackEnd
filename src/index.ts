@@ -5,6 +5,7 @@ import { run } from './services/firebase';
 import { createVault, getVaults, removeVault } from './services/vaultsDB';
 import { fetchPrices } from './services/fetchPrices';
 import { tradingBox } from './services/tradingBox';
+import { fetchOrders } from './services/orders';
 import { fav, removeFav, getFavs } from './services/favourites';
 
 // Initialize server
@@ -56,6 +57,12 @@ dollarBillServer.post('/openOrder', (req: Request, res: Response) => {
 
 dollarBillServer.post('/closeOrder', (req: Request, res: Response) => {
   tradingBox.closeOrder().then(function(result:any){
+    res.json(result);
+  });
+});
+
+dollarBillServer.post('/fetchOrders', (req: Request, res: Response) => {
+  fetchOrders(vaultsDB, req.body.account, req.body.exchange).then(function(result:any){
     res.json(result);
   });
 });
