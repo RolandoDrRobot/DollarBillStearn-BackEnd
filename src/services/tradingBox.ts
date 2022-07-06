@@ -25,34 +25,6 @@ const tradingBox = {
 
       const order =  await exchangeTest.createOrder(symbol, type, side, amount, price);
       transactionStatus.status = 'Order created sucessfully';
-      
-      const transactionsAccount = await transactionsDB.doc(account).get();
-
-      // if (!transactionsAccount._fieldsProto) {
-      //   await transactionsDB.doc(account).set({
-      //     account: account,
-      //     transactions: {
-      //       : true
-      //     }
-      //   });
-      //   favStatus.status = 'Added ticker to favourites';
-      // } else {
-      //   let favAccounts:Array<any> = [];
-      //   const snapshot = await favsDB.get();
-      //   const allAccounts = snapshot.docs.map((doc: { data: () => any; }) => doc.data());
-      //   allAccounts.forEach(function (item:any, index:any) {
-      //     if(item.account === account) favAccounts.push(item);
-      //   });
-  
-      //   const favTickers = favAccounts ? favAccounts[0].favouriteTickers : {}
-      //   favTickers[ticker] = true;
-  
-      //   await favsDB.doc(account).update({
-      //     favouriteTickers: favTickers
-      //   });
-      //   favStatus.status = 'Added ticker to favourites';
-      // }
-
     } catch (e) {
       transactionStatus.status = 'catch';
     }
