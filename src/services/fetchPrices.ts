@@ -5,10 +5,6 @@ const fetchPrices = async () => {
   const binance  = new binanceInstance();
   const binanceTickers = await binance.fetchTickers();
 
-  const ftxInstance:any = ccxt['ftx'];
-  const ftx  = new ftxInstance();
-  const ftxTickers = await ftx.fetchTickers();
-
   const okxInstance:any = ccxt['binance'];
   const okx  = new okxInstance();
   const okxTickers = await okx.fetchTickers();
@@ -17,11 +13,6 @@ const fetchPrices = async () => {
   interface tickerPrices {
     symbol: string,
     binance: {
-      price: number,
-      volume: number,
-      percentage: number
-    },
-    ftx: {
       price: number,
       volume: number,
       percentage: number
@@ -42,11 +33,6 @@ const fetchPrices = async () => {
           volume: binanceTickers[ticker].quoteVolume,
           percentage: binanceTickers[ticker].percentage,
         },
-        ftx: {
-          price: 0,
-          volume: 0,
-          percentage: 0
-        },
         okx: {
           price: 0,
           volume: 0,
@@ -56,18 +42,6 @@ const fetchPrices = async () => {
       pricesTable.push(tickerPrice);
     }
   }
-
-  pricesTable.forEach(function(item, index) {
-    for (const ticker in ftxTickers) {
-      if (ticker.includes('/USDT') && item.symbol === ticker) {
-        item.ftx = {
-          price: ftxTickers[ticker].bid,
-          volume: ftxTickers[ticker].quoteVolume,
-          percentage: ftxTickers[ticker].percentage,
-        }
-      }
-    }
-  });
 
   pricesTable.forEach(function(item, index) {
     for (const ticker in okxTickers) {
