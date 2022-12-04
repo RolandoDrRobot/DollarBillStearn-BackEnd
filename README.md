@@ -1,11 +1,10 @@
 # 💸⚡️ Dollar-Bill-BackEnd
 ## 📘 Table of contents
-- What is this
-- Features
-- How to install
-- How to use
-- Improvements Ideas
-
+1. [What is this](#what-is-this)
+2. [Features](#features)
+3. [How to install](#how-to-install)
+4. [How to use](#how-to-use)
+4. [Improvements Ideas](#improvements-ideas)
 
 ### 💸 What is this
 - This is the backend for Internal APP of [Dollar Bill](https://github.com/RolandoDrRobot/Research-Dollar-Bill)
