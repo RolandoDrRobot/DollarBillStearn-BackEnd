@@ -1,4 +1,4 @@
-# 💸⚡️ Dollar-Bill-BackEnd
+# 💸⚡️ DollarBill-BackEnd
 # 📘 Table of contents
 1. [What is this](#-what-is-this)
 2. [Features](#%EF%B8%8F-features)
