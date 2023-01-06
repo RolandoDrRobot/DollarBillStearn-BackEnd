@@ -1,5 +1,5 @@
 # 💸⚡️ DollarBill-BackEnd
-# 📘 Table of contents
+## 📘 Table of contents
 1. [What is this](#-what-is-this)
 2. [Features](#%EF%B8%8F-features)
 3. [How to install](#%EF%B8%8F-how-to-install)
